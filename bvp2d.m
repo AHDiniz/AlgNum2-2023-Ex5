@@ -30,10 +30,10 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     A(1,1+n) = e_coeff(1);
 
     for I = 2 : n
-        A(I,I-1)=b(I);
-        A(I,I)=a(I);
-        A(I,I+1)=c(I);
-        A(I,I+n)=e(I);
+        A(I,I-1)=b_coeff(I);
+        A(I,I)=a_coeff(I);
+        A(I,I+1)=c_coeff(I);
+        A(I,I+n)=e_coeff(I);
     end
 
     for I = n + 1 : ((m-1)*n)
