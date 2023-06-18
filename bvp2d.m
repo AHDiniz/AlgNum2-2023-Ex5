@@ -10,8 +10,8 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     x = arrayfun(calc_x, [1 : n]);
     y = arrayfun(calc_y, [1 : m]);
 
-    x_value = @(i) x(clip(idivide(int32(i), int32(n), "fix") + 1, [0, n]));
-    y_value = @(i) y(clip(mod(i, n) + 1, [0, n]));
+    x_value = @(i) x(clamp(idivide(int32(i), int32(n), "fix") + 1, [0, n]));
+    y_value = @(i) y(clamp(mod(i, n) + 1, [0, n]));
 
     # Aproximate derivatives by finite differences
     a_coeff = @(i) gamma_func(x_value(i), y_value(i)) + 2 * k * (1 / (h(1) * h(1)) + 1 / (h(2) * h(2)));
