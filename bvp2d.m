@@ -27,7 +27,7 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     for i = 1 : N
         A(i,i) = a_coeff(i);
     end
-    for i = 2 : N - 1
+    for i = 2 : N
         A(i,i-1) = b_coeff(i);
     end
     for i = 1 : N - 1
