@@ -50,7 +50,7 @@ function example1()
         bound_conditions = [bound_conditions, bound_conditions_array];
     end
 
-    k = 1;
+    k = -1;
 
     beta_x_func = @(x, y) 1;
     beta_y_func = @(x, y) 20 * y;
