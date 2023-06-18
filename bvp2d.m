@@ -24,21 +24,36 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     N = n * m;
 
     A = sparse(N, N);
-    for i = 1 : N
-        A(i,i) = a_coeff(i);
+
+    A(1,1) = a_coeff(1);
+    A(1,2) = c_coeff(1);
+    A(1,1+n) = e_coeff(1);
+
+    for I = 2 : n
+        A(I,I-1)=b(I);
+        A(I,I)=a(I);
+        A(I,I+1)=c(I);
+        A(I,I+n)=e(I);
     end
-    for i = 2 : N
-        A(i,i-1) = b_coeff(i);
+
+    for I = n + 1 : ((m-1)*n)
+        A(I,I-n) = d_coeff(I);
+        A(I,I-1) = b_coeff(I);
+        A(I,I) = a_coeff(I);
+        A(I,I+1) = c_coeff(I);
+        A(I,I+n) = e_coeff(I);
     end
-    for i = 1 : N - 1
-        A(i,i+1) = c_coeff(i);
+
+    for I = (((m-1)*n)+1):((m*n)-1)
+        A(I,I-n) = d_coeff(I);
+        A(I,I-1) = b_coeff(I);
+        A(I,I) = a_coeff(I);
+        A(I,I+1) = c_coeff(I);
     end
-    for i = n + 1 : N
-        A(i,i-n) = d_coeff(i);
-    end
-    for i = 1 : (m - 1) * n
-        A(i,i+n) = e_coeff(i);
-    end
+
+    A(N,N) = a_coeff(N);
+    A(N,N-1) = b_coeff(N);
+    A(N,N-1) = d_coeff(N);
 
     f = zeros(N);
     for i = 1 : n
