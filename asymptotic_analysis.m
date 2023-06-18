@@ -32,7 +32,7 @@ function asymptotic_analysis(a, b, c, d, ns, ms, k, beta_x_func, beta_y_func, ga
 
     end
 
-    space_length = (b - a) * (d - c);
+    space_length = (b - a);
     logh = zeros(numel(ns), 1);
     logE = zeros(numel(ns), 1);
     for i = 1 : numel(ns)
