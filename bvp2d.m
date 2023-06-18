@@ -70,46 +70,38 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
             row(bound_condition.condition_index) = 1;
             A(bound_condition.condition_index,:) = row;
             f(bound_condition.condition_index) = g_func(x_value, y_value);
-        end
-        if strcmp(bound_condition.condition_type, "derivative")
+        elseif strcmp(bound_condition.condition_type, "derivative")
             if find(top_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i-n);
                 f(i) += A(i,i-n) * h(2) * h_func(x_value, y_value) / k;
                 A(i,i-n) = 0;
-            end
-            if find(left_bound == bound_condition.condition_index) != []
+            elseif find(left_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i+1);
                 f(i) += A(i,i+1) * h(1) * h_func(x_value, y_value) / k;
                 A(i,i+1) = 0;
-            end
-            if find(bottom_bound == bound_condition.condition_index) != []
+            elseif find(bottom_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i+n);
                 f(i) += A(i,i+n) * h(2) * h_func(x_value, y_value) / k;
                 A(i,i+n) = 0;
-            end
-            if find(right_bound == bound_condition.condition_index) != []
+            elseif find(right_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i-1);
                 f(i) += A(i,i-1) * h(1) * h_func(x_value, y_value) / k;
                 A(i,i-1) = 0;
             end
-        end
-        if strcmp(bound_condition.condition_type, "mixed")
+        elseif strcmp(bound_condition.condition_type, "mixed")
             if find(top_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i-n) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
                 f(i) -= A(i,i-n) * ((h(2) * q_func(x_value, y_value)) / bound_condition.alpha_value) * q_func(x_value, y_value);
                 A(i,i-n) = 0;
-            end
-            if find(left_bound == bound_condition.condition_index) != []
+            elseif find(left_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i-n) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
                 f(i) -= A(i,i-n) * ((h(1) * q_func(x_value, y_value)) / bound_condition.alpha_value) * q_func(x_value, y_value);
                 A(i,i-n) = 0;
-            end
-            if find(bottom_bound == bound_condition.condition_index) != []
+            elseif find(bottom_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i-n) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
                 f(i) -= A(i,i-n) * ((h(2) * q_func(x_value, y_value)) / bound_condition.alpha_value) * q_func(x_value, y_value);
                 A(i,i-n) = 0;
-            end
-            if find(right_bound == bound_condition.condition_index) != []
+            elseif find(right_bound == bound_condition.condition_index) != []
                 A(i,i) += A(i,i-n) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
                 f(i) -= A(i,i-n) * ((h(1) * q_func(x_value, y_value)) / bound_condition.alpha_value) * q_func(x_value, y_value);
                 A(i,i-n) = 0;
