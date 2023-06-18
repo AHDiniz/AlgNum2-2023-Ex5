@@ -109,6 +109,9 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     end
 
     # Solve linear system
-    u = gmres(A, f, 10, 1e-4, 15);
+    opts.type = "crout";
+    opts.droptol = 1e-4;
+    [L, U] = ilu(A, opts);
+    u = gmres(A, f, 10, 1e-4, 15, L, U);
 
 endfunction
