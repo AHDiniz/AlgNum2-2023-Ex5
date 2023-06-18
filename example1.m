@@ -8,47 +8,19 @@ function example1()
     ns = [10, 25, 50, 100];
     ms = [10, 25, 50, 100];
 
-    bound_conditions = [];
+    bound_condition_top.condition_type = "value";
+    bound_condition_top.bound = "top";
 
-    for i = 1 : numel(ns)
-        n = ns(i);
-        m = ms(i);
+    bound_condition_right.condition_type = "value";
+    bound_condition_right.bound = "right";
 
-        bound_conditions_array = [];
+    bound_condition_bottom.condition_type = "value";
+    bound_condition_bottom.bound = "bottom";
 
-        top_bound = [1 : n];
-        for j = 1 : numel(top_bound)
-            bound_condition.condition_type = "value";
-            bound_condition.condition_index = top_bound(j);
-            bound_conditions_array = [bound_conditions_array, bound_condition];
-        end
+    bound_condition_left.condition_type = "value";
+    bound_condition_left.bound = "left";
 
-        left_bound = [1 : m];
-        left_bound = arrayfun(@(a) a * n, left_bound);
-        for j = 1 : numel(left_bound)
-            bound_condition.condition_type = "value";
-            bound_condition.condition_index = left_bound(j);
-            bound_conditions_array = [bound_conditions_array, bound_condition];
-        end
-
-        bottom_bound = [1 : n];
-        bottom_bound = arrayfun(@(a) (m - 1) * n + a, bottom_bound);
-        for j = 1 : numel(bottom_bound)
-            bound_condition.condition_type = "value";
-            bound_condition.condition_index = bottom_bound(j);
-            bound_conditions_array = [bound_conditions_array, bound_condition];
-        end
-
-        right_bound = [0 : (m - 1)];
-        right_bound = arrayfun(@(a) a * n + 1, right_bound);
-        for j = 1 : numel(right_bound)
-            bound_condition.condition_type = "value";
-            bound_condition.condition_index = right_bound(j);
-            bound_conditions_array = [bound_conditions_array, bound_condition];
-        end
-
-        bound_conditions = [bound_conditions, bound_conditions_array];
-    end
+    bound_conditions = [bound_condition_top, bound_condition_right, bound_condition_bottom, bound_condition_left];
 
     k = -1;
 

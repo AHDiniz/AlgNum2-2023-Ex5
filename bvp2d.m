@@ -10,8 +10,8 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     x = arrayfun(calc_x, [1 : n]);
     y = arrayfun(calc_y, [1 : m]);
 
-    x_value = @(i) x(clamp(idivide(int32(i), int32(n), "fix") + 1, 0, n));
-    y_value = @(i) y(clamp(mod(i, n) + 1, 0, n));
+    x_value = @(i) x(clamp(idivide(int32(i), int32(n), "fix") + 1, [0, n]));
+    y_value = @(i) y(clamp(mod(i, n) + 1, [0, n]));
 
     # Aproximate derivatives by finite differences
     a_coeff = @(i) gamma_func(x_value(i), y_value(i)) + 2 * k * (1 / (h(1) * h(1)) + 1 / (h(2) * h(2)));
@@ -77,48 +77,84 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     for i = 1 : numel(bound_conditions)
         bound_condition = bound_conditions(i);
 
-        point = [x_value(bound_condition.condition_index), y_value(bound_condition.condition_index)];
-
         if strcmp(bound_condition.condition_type, "value")
             row = zeros(N, 1);
-            row(bound_condition.condition_index) = 1;
-            A(bound_condition.condition_index,:) = row;
-            f(bound_condition.condition_index) = g_func(point(1), point(2));
+            if strcmp(bound_condition.bound, "top")
+                for j = top_bound
+                    row(j) = 1;
+                    A(j,:) = row;
+                    f(j) = g_func(x_value(j), y_value(j));
+                end
+            elseif strcmp(bound_condition.bound, "right")
+                for j = right_bound
+                    row(j) = 1;
+                    A(j,:) = row;
+                    f(j) = g_func(x_value(j), y_value(j));
+                end
+            elseif strcmp(bound_condition.bound, "bottom")
+                for j = bottom_bound
+                    row(j) = 1;
+                    A(j,:) = row;
+                    f(j) = g_func(x_value(j), y_value(j));
+                end
+            elseif strcmp(bound_condition.bound, "left")
+                for j = left_bound
+                    row(j) = 1;
+                    A(j,:) = row;
+                    f(j) = g_func(x_value(j), y_value(j));
+                end
+            end
         elseif strcmp(bound_condition.condition_type, "derivative")
-            if find(top_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i-n);
-                f(i) += A(i,i-n) * h(2) * h_func(point(1), point(2)) / k;
-                A(i,i-n) = 0;
-            elseif find(left_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i+1);
-                f(i) += A(i,i+1) * h(1) * h_func(point(1), point(2)) / k;
-                A(i,i+1) = 0;
-            elseif find(bottom_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i+n);
-                f(i) += A(i,i+n) * h(2) * h_func(point(1), point(2)) / k;
-                A(i,i+n) = 0;
-            elseif find(right_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i-1);
-                f(i) += A(i,i-1) * h(1) * h_func(point(1), point(2)) / k;
-                A(i,i-1) = 0;
+            if strcmp(bound_condition.bound, "top")
+                for j = top_bound
+                    A(j,j) += A(j,j-n);
+                    f(j) += A(j,j-n) * h(2) * h_func(x_value(j), y_value(j)) / k;
+                    A(j,j-n) = 0;
+                end
+            elseif strcmp(bound_condition.bound, "right")
+                for j = right_bound
+                    A(j,j) += A(j,j+1);
+                    f(j) += A(j,j+1) * h(1) * h_func(x_value(j), y_value(j)) / k;
+                    A(j,j+1) = 0;
+                end
+            elseif strcmp(bound_condition.bound, "bottom")
+                for j = bottom_bound
+                    A(j,j) += A(j,j+n);
+                    f(j) += A(j,j+n) * h(2) * h_func(x_value(j), y_value(j)) / k;
+                    A(j,j+n) = 0;
+                end
+            elseif strcmp(bound_condition.bound, "left")
+                for j = left_bound
+                    A(j,j) += A(j,j-1);
+                    f(j) += A(j,j-1) * h(1) * h_func(x_value(j), y_value(j)) / k;
+                    A(j,j-1) = 0;
+                end
             end
         elseif strcmp(bound_condition.condition_type, "mixed")
-            if find(top_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i-n) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
-                f(i) -= A(i,i-n) * ((h(2) * q_func(point(1), point(2))) / bound_condition.alpha_value) * q_func(point(1), point(2));
-                A(i,i-n) = 0;
-            elseif find(left_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i-n) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
-                f(i) -= A(i,i-n) * ((h(1) * q_func(point(1), point(2))) / bound_condition.alpha_value) * q_func(point(1), point(2));
-                A(i,i-n) = 0;
-            elseif find(bottom_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i-n) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
-                f(i) -= A(i,i-n) * ((h(2) * q_func(point(1), point(2))) / bound_condition.alpha_value) * q_func(point(1), point(2));
-                A(i,i-n) = 0;
-            elseif find(right_bound == bound_condition.condition_index) != []
-                A(i,i) += A(i,i-n) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
-                f(i) -= A(i,i-n) * ((h(1) * q_func(point(1), point(2))) / bound_condition.alpha_value) * q_func(point(1), point(2));
-                A(i,i-n) = 0;
+            if strcmp(bound_condition.bound, "top")
+                for j = top_bound
+                    A(j,j) += A(j,j-n) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
+                    f(j) -= A(j,j-n) * ((h(2) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
+                    A(j,j-n) = 0;
+                end
+            elseif strcmp(bound_condition.bound, "right")
+                for j = right_bound
+                    A(j,j) += A(j,j-n) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
+                    f(j) -= A(j,j-n) * ((h(1) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
+                    A(j,j-n) = 0;
+                end
+            elseif strcmp(bound_condition.bound, "bottom")
+                for j = bottom_bound
+                    A(j,j) += A(j,j-n) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
+                    f(j) -= A(j,j-n) * ((h(2) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
+                    A(j,j-n) = 0;
+                end
+            elseif strcmp(bound_condition.bound, "left")
+                for j = left_bound
+                    A(j,j) += A(j,j-n) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
+                    f(j) -= A(j,j-n) * ((h(1) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
+                    A(j,j-n) = 0;
+                end
             end
         end
     end

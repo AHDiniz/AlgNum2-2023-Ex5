@@ -7,7 +7,7 @@ function asymptotic_analysis(a, b, c, d, ns, ms, k, beta_x_func, beta_y_func, ga
         n = ns(i);
         m = ms(i);
 
-        [x, y, approx_u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, gamma_func, g_func, h_func, q_func, f_func, bound_conditions(i));
+        [x, y, approx_u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, gamma_func, g_func, h_func, q_func, f_func, bound_conditions);
 
         real_u = zeros(n * m);
         for j = 1 : n
