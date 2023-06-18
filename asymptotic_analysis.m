@@ -45,7 +45,7 @@ function asymptotic_analysis(a, b, c, d, ns, ms, k, beta_x_func, beta_y_func, ga
     px = polyval(p, logh);
 
     hf = figure();
-    plot(logh, logE, "o", logh, px);
+    plot(logh, px, "o", logh, logE);
     title("Taxa de Convergência 1D");
     print(hf, sprintf("%s/convergence.png", output_dir), "-dpng");
 
