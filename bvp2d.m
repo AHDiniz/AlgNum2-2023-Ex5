@@ -63,13 +63,13 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     end
 
     # Apply bound conditions
-    top_bound = [1 : n];
+    bottom_bound = [1 : n];
 
     left_bound = [1 : m];
     left_bound = arrayfun(@(a) a * n, left_bound);
 
-    bottom_bound = [1 : n];
-    bottom_bound = arrayfun(@(a) (m - 1) * n + a, bottom_bound);
+    top_bound = [1 : n];
+    top_bound = arrayfun(@(a) (m - 1) * n + a, top_bound);
 
     right_bound = [0 : (m - 1)];
     right_bound = arrayfun(@(a) a * n + 1, right_bound);
