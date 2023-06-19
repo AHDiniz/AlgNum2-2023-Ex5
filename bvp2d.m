@@ -114,7 +114,7 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
             elseif strcmp(bound_condition.bound, "right")
                 for j = right_bound
                     A(j,j) += c_coeff(j);
-                    f(j) c_coeff(j) * h(1) * h_func(x_value(j), y_value(j)) / k;
+                    f(j) += c_coeff(j) * h(1) * h_func(x_value(j), y_value(j)) / k;
                     # A(j,j+1) = 0;
                 end
             elseif strcmp(bound_condition.bound, "bottom")
