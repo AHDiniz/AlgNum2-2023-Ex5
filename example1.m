@@ -22,7 +22,7 @@ function example1()
 
     bound_conditions = [bound_condition_top, bound_condition_right, bound_condition_bottom, bound_condition_left];
 
-    k = -1;
+    k = 1;
 
     beta_x_func = @(x, y) 1;
     beta_y_func = @(x, y) 20 * y;
