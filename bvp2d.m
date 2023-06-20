@@ -65,14 +65,11 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
     # Apply bound conditions
     bottom_bound = [1 : n];
 
-    left_bound = [1 : m];
-    left_bound = arrayfun(@(a) a * n, left_bound);
+    left_bound = [1 : n : (m - 1) * n + 1];
 
-    top_bound = [1 : n];
-    top_bound = arrayfun(@(a) (m - 1) * n + a, top_bound);
+    top_bound = [(m - 1) * n + 1 : n * m];
 
-    right_bound = [0 : (m - 1)];
-    right_bound = arrayfun(@(a) a * n + 1, right_bound);
+    right_bound = [n : n : n * m];
 
     for i = 1 : numel(bound_conditions)
         bound_condition = bound_conditions(i);
@@ -109,25 +106,25 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
                 for j = top_bound
                     A(j,j) += e_coeff(j);
                     f(j) += e_coeff(j) * h(2) * h_func(x_value(j), y_value(j)) / k;
-                    # A(j,j+n) = 0;
+                    A(j,j+n) = 0;
                 end
             elseif strcmp(bound_condition.bound, "right")
                 for j = right_bound
                     A(j,j) += c_coeff(j);
                     f(j) += c_coeff(j) * h(1) * h_func(x_value(j), y_value(j)) / k;
-                    # A(j,j+1) = 0;
+                    A(j,j+1) = 0;
                 end
             elseif strcmp(bound_condition.bound, "bottom")
                 for j = bottom_bound
                     A(j,j) += d_coeff(j);
                     f(j) += d_coeff(j) * h(2) * h_func(x_value(j), y_value(j)) / k;
-                    # A(j,j-n) = 0;
+                    A(j,j-n) = 0;
                 end
             elseif strcmp(bound_condition.bound, "left")
                 for j = left_bound
                     A(j,j) += b_coeff(j);
                     f(j) += b_coeff(j) * h(1) * h_func(x_value(j), y_value(j)) / k;
-                    # A(j,j-1) = 0;
+                    A(j,j-1) = 0;
                 end
             end
         elseif strcmp(bound_condition.condition_type, "mixed")
@@ -135,25 +132,25 @@ function [x, y, u, er] = bvp2d(a, b, c, d, n, m, k, beta_x_func, beta_y_func, ga
                 for j = top_bound
                     A(j,j) += e_coeff(j) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
                     f(j) -= e_coeff(j) * ((h(2) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
-                    # A(j,j-n) = 0;
+                    A(j,j-n) = 0;
                 end
             elseif strcmp(bound_condition.bound, "right")
                 for j = right_bound
                     A(j,j) += c_coeff(j) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
                     f(j) -= c_coeff(j) * ((h(1) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
-                    # A(j,j-n) = 0;
+                    A(j,j-n) = 0;
                 end
             elseif strcmp(bound_condition.bound, "bottom")
                 for j = bottom_bound
                     A(j,j) += d_coeff(j) * (1 - (h(2) * bound_condition.beta_value) / bound_condition.alpha_value);
                     f(j) -= d_coeff(j) * ((h(2) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
-                    # A(j,j-n) = 0;
+                    A(j,j-n) = 0;
                 end
             elseif strcmp(bound_condition.bound, "left")
                 for j = left_bound
                     A(j,j) += b_coeff(j) * (1 - (h(1) * bound_condition.beta_value) / bound_condition.alpha_value);
                     f(j) -= b_coeff(j) * ((h(1) * q_func(x_value(j), y_value(j))) / bound_condition.alpha_value) * q_func(x_value(j), y_value(j));
-                    # A(j,j-n) = 0;
+                    A(j,j-n) = 0;
                 end
             end
         end
